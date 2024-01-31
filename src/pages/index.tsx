@@ -13,11 +13,11 @@ export default function Home() {
         </li>
 
         <li>
-          <a href="/lista">Lista</a>
+          <a href="/lista">Lista ✅</a>
         </li>
 
         <li>
-          <a href="/formulario">Formulário</a>
+          <a href="/formulario">Formulário ✅</a>
         </li>
 
         <li>

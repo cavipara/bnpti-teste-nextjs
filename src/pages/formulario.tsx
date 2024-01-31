@@ -9,27 +9,65 @@
  * - Lide com os possíveis erros
  */
 
-import styles from '@/styles/formulario.module.css';
+import styles from "@/styles/formulario.module.css";
+import { z } from "zod";
+import { useForm, SubmitHandler } from "react-hook-form";
+import axios, { AxiosError } from "axios";
+
+type FormInputs = {
+  name: string;
+  email: string;
+};
+
+const FormSchema = z.object({
+  name: z.string(),
+  email: z.string().email({ message: "Email inválido" }),
+});
 
 export default function Form() {
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-		event.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<FormInputs>();
 
-		console.log('submit');
-	}
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    try {
+      const validatedData = FormSchema.parse(data);
+      await axios.post("/api/users/create", validatedData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        for (const issue of error.issues) {
+          if (typeof issue.path[0] === "string") {
+            setError(issue.path[0] as keyof FormInputs, {
+              message: issue.message,
+            });
+          }
+        }
+      } else {
+        const axiosError = error as AxiosError;
+        console.error(axiosError.message);
+      }
+    }
+  };
 
-	return (
-		<div className={styles.container}>
-			<div className={styles.content}>
-				<form onSubmit={handleSubmit}>
-					<input type="text" placeholder="Name" />
-					<input type="email" placeholder="E-mail" />
+  return (
+    <div className={styles.container}>
+      <div className={styles.content}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input {...register("name", { required: true })} placeholder="Nome" />
+          {errors.name && <span>{errors.name?.message}</span>}
 
-					<button type="submit" data-type="confirm">
-						Enviar
-					</button>
-				</form>
-			</div>
-		</div>
-	);
+          <input
+            {...register("email", { required: true })}
+            placeholder="Email"
+          />
+          {errors.email && <span>{errors.email?.message}</span>}
+
+          <button type="submit">Enviar</button>
+        </form>
+      </div>
+    </div>
+  );
 }
