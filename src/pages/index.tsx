@@ -21,7 +21,7 @@ export default function Home() {
         </li>
 
         <li>
-          <a href="/context-api">Context API</a>
+          <a href="/context-api">Context API ✅</a>
         </li>
 
         <li>

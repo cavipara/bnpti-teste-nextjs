@@ -13,6 +13,8 @@ import styles from "@/styles/formulario.module.css";
 import { z } from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios, { AxiosError } from "axios";
+import { useToast } from "@/context/ToastContex";
+import { ToastMessage } from "@/components/ToastMessage";
 
 type FormInputs = {
   name: string;
@@ -31,11 +33,18 @@ export default function Form() {
     setError,
     formState: { errors },
   } = useForm<FormInputs>();
+  const { toastMessages, showToast } = useToast();
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
       const validatedData = FormSchema.parse(data);
       await axios.post("/api/users/create", validatedData);
+      showToast({
+        id: String(Math.random()),
+        message: "Usuário criado com sucesso",
+        type: "success",
+        duration: 3000,
+      });
     } catch (error) {
       if (error instanceof z.ZodError) {
         for (const issue of error.issues) {
@@ -53,21 +62,31 @@ export default function Form() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.content}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <input {...register("name", { required: true })} placeholder="Nome" />
-          {errors.name && <span>{errors.name?.message}</span>}
+    <>
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <input
+              {...register("name", { required: true })}
+              placeholder="Nome"
+            />
+            {errors.name && <span>{errors.name?.message}</span>}
 
-          <input
-            {...register("email", { required: true })}
-            placeholder="Email"
-          />
-          {errors.email && <span>{errors.email?.message}</span>}
+            <input
+              {...register("email", { required: true })}
+              placeholder="Email"
+            />
+            {errors.email && <span>{errors.email?.message}</span>}
 
-          <button type="submit">Enviar</button>
-        </form>
+            <button type="submit">Enviar</button>
+          </form>
+        </div>
       </div>
-    </div>
+      <div className={styles["toast-container"]}>
+        {toastMessages.map((toast) => (
+          <ToastMessage key={toast.id} content={toast} />
+        ))}
+      </div>
+    </>
   );
 }
