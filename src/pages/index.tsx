@@ -29,7 +29,7 @@ export default function Home() {
         </li>
 
         <li>
-          <a href="/ciclo-de-vida">Ciclo de vida de componente</a>
+          <a href="/ciclo-de-vida">Ciclo de vida de componente ✅</a>
         </li>
       </ul>
     </div>
