@@ -25,7 +25,7 @@ export default function Home() {
         </li>
 
         <li>
-          <a href="/pagina-estatica">Pagina estática</a>
+          <a href="/pagina-estatica">Pagina estática ✅</a>
         </li>
 
         <li>
