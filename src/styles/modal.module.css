@@ -4,6 +4,7 @@
 	align-items: center;
 	margin: 0 auto;
 	height: 100%;
+	gap: 0.5rem;
 }
 
 .modal-form form {
